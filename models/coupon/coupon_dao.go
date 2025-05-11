@@ -3,6 +3,8 @@ package coupon
 import (
 	"coupon-system/constants"
 	"coupon-system/db"
+	"encoding/json"
+	"slices"
 
 	"coupon-system/models/request"
 	"coupon-system/pkg/resterrors"
@@ -10,11 +12,10 @@ import (
 
 func GetApplicableCoupons(req request.ApplicableCouponRequest) ([]Coupon, resterrors.RestErr) {
 	var coupons []Coupon
-	result := db.DB.Table(Coupon{}.TableName()).
-		Where("is_active = ?", 1).
+	result := db.DB.Debug().Table(Coupon{}.TableName()).
+		Where("valid_from <= ? AND valid_to >= ?", req.Timestamp, req.Timestamp).
 		Where("min_order_value <= ?", req.OrderTotal).
-		// Where("(valid_from IS NULL OR valid_from <= ?)", currentTime).
-		// Where("(valid_to IS NULL OR valid_to >= ?)", currentTime).
+		Where("is_active = ?", 1).
 		Find(&coupons)
 	if result.Error != nil {
 		return []Coupon{}, resterrors.NewInternalServerError(constants.MESSAGE_SOMETHING_WENT_WRONG, result.Error)
@@ -22,7 +23,21 @@ func GetApplicableCoupons(req request.ApplicableCouponRequest) ([]Coupon, rester
 	if result.RowsAffected == 0 {
 		return []Coupon{}, resterrors.NewBadRequestError(constants.MESSAGE_NO_APPLICABLE_COUPON)
 	}
-	return coupons, nil
+
+	var couponRes []Coupon
+	for _, item := range coupons {
+		var medIDs, catIDs []string
+		_ = json.Unmarshal(item.ApplicableMedicineIDs, &medIDs)
+		_ = json.Unmarshal(item.ApplicableCategories, &catIDs)
+
+		for _, c := range req.CartItems {
+			if slices.Contains(medIDs, c.Id) && slices.Contains(catIDs, c.Category) {
+				couponRes = append(couponRes, item)
+				break
+			}
+		}
+	}
+	return couponRes, nil
 }
 
 // admin APIs

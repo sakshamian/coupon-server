@@ -2,6 +2,7 @@ package coupon
 
 import (
 	"coupon-system/models/request"
+	"coupon-system/models/response"
 	"encoding/json"
 	"time"
 
@@ -50,21 +51,10 @@ func ConvertToCouponDTO(req *request.CreateCoupon) Coupon {
 	}
 }
 
-// func ConvertToCouponResponse(req *request.CreateCoupon) Coupon {
-// 	medIDsJSON, _ := json.Marshal(req.ApplicableMedicineIDs)
-// 	categoriesJSON, _ := json.Marshal(req.ApplicableCategories)
-
-// 	return Coupon{
-// 		CouponCode:            req.CouponCode,
-// 		UsageType:             req.UsageType,
-// 		ApplicableMedicineIDs: medIDsJSON,
-// 		ApplicableCategories:  categoriesJSON,
-// 		MinOrderValue:         req.MinOrderValue,
-// 		ValidFrom:             req.ValidFrom,
-// 		ValidTo:               req.ValidTo,
-// 		TermsAndConditions:    req.TermsAndConditions,
-// 		DiscountType:          req.DiscountType,
-// 		MaxUsagePerUser:       req.MaxUsagePerUser,
-// 		IsActive:              req.IsActive,
-// 	}
-// }
+func ConvertToDiscountResponse(c Coupon) response.ApplicableCouponResponse {
+	return response.ApplicableCouponResponse{
+		CouponCode:    c.CouponCode,
+		DiscountValue: c.DiscountValue,
+		UsageType:     c.UsageType,
+	}
+}

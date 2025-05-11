@@ -24,9 +24,13 @@ func InitRoutes(router *gin.Engine) {
 				}
 			}
 
-			couponModule := v1.Group("coupons")
+			app := v1.Group("app")
 			{
-				couponModule.GET("applicable", handler.GetApplicableCoupons)
+				couponModule := app.Group("coupons")
+				{
+					couponModule.POST("applicable", handler.GetApplicableCoupons)
+					// couponModule.POST("apply", handler.ApplyCoupon)
+				}
 			}
 		}
 	}
