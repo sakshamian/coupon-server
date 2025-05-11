@@ -21,6 +21,5 @@ func Connect() {
 	}
 
 	// DB.AutoMigrate(&models.Message{})
-
 	fmt.Println("Successfully connected to the database!")
 }
