@@ -42,3 +42,27 @@ func GetApplicableCoupons(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, responses.ResponseSuccess(applicableCoupons))
 }
+
+func ApplyCoupon(ctx *gin.Context) {
+	var req request.ApplyCoupon
+	var restErr resterrors.RestErr
+
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		restErr = resterrors.NewBadRequestError(constants.MESSAGE_INVALID_REQUEST_PARAMETERS)
+		ctx.JSON(restErr.Status(), restErr)
+		return
+	}
+
+	if restErr = req.Validate(); restErr != nil {
+		ctx.JSON(restErr.Status(), restErr)
+		return
+	}
+
+	couponResult, restErr := service.ApplyCoupon(req)
+	if restErr != nil {
+		ctx.JSON(restErr.Status(), restErr)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, responses.ResponseSuccess(couponResult))
+}

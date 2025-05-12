@@ -20,3 +20,12 @@ func GetApplicableCoupons(req request.ApplicableCouponRequest) ([]response.Appli
 
 	return discountRes, nil
 }
+
+func ApplyCoupon(req request.ApplyCoupon) (response.ApplyCoupon, resterrors.RestErr) {
+	appliedCoupon, err := coupon.ApplyCoupon(req)
+	if err != nil {
+		return response.ApplyCoupon{}, err
+	}
+
+	return coupon.ConvertToApplyCouponResponse(appliedCoupon), nil
+}

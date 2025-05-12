@@ -29,7 +29,7 @@ func InitRoutes(router *gin.Engine) {
 				couponModule := app.Group("coupons")
 				{
 					couponModule.POST("applicable", handler.GetApplicableCoupons)
-					// couponModule.POST("apply", handler.ApplyCoupon)
+					couponModule.POST("validate", handler.ApplyCoupon)
 				}
 			}
 		}

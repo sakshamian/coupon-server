@@ -1,6 +1,7 @@
 package coupon
 
 import (
+	"coupon-system/constants"
 	"coupon-system/models/request"
 	"coupon-system/models/response"
 	"encoding/json"
@@ -56,5 +57,18 @@ func ConvertToDiscountResponse(c Coupon) response.ApplicableCouponResponse {
 		CouponCode:    c.CouponCode,
 		DiscountValue: c.DiscountValue,
 		UsageType:     c.UsageType,
+	}
+}
+
+func ConvertToApplyCouponResponse(c Coupon) response.ApplyCoupon {
+	var discount response.Discount
+	if c.DiscountType == constants.DISCOUNT_TYPE_CHARGE {
+		discount.ChargesDiscount = c.DiscountValue
+	} else {
+		discount.ItemDiscount = c.DiscountValue
+	}
+	return response.ApplyCoupon{
+		IsValid:  true,
+		Discount: discount,
 	}
 }
