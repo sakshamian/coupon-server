@@ -40,33 +40,14 @@ func GetApplicableCoupons(req request.ApplicableCouponRequest) ([]Coupon, rester
 	return couponRes, nil
 }
 
-func ApplyCoupon(req request.ApplyCoupon) (Coupon, resterrors.RestErr) {
+func GetCouponByCouponCode(couponCode string) (Coupon, resterrors.RestErr) {
 	var coupon Coupon
-	result := db.DB.Debug().Table(Coupon{}.TableName()).
-		Where("coupon_code = ?", req.CouponCode).
-		Where("valid_from <= ? AND valid_to >= ?", req.Timestamp, req.Timestamp).
-		Where("min_order_value <= ?", req.OrderTotal).
-		Where("is_active = ?", 1).
-		First(&coupon)
+	result := db.DB.Debug().Table(Coupon{}.TableName()).Where("coupon_code = ?", couponCode).First(&coupon)
 	if result.Error != nil {
 		return Coupon{}, resterrors.NewInternalServerError(constants.MESSAGE_SOMETHING_WENT_WRONG, result.Error)
 	}
 	if result.RowsAffected == 0 {
 		return Coupon{}, resterrors.NewBadRequestError(constants.MESSAGE_NO_APPLICABLE_COUPON)
-	}
-
-	var medIDs, catIDs []string
-	_ = json.Unmarshal(coupon.ApplicableMedicineIDs, &medIDs)
-	_ = json.Unmarshal(coupon.ApplicableCategories, &catIDs)
-
-	counter := 0
-	for _, c := range req.CartItems {
-		if slices.Contains(medIDs, c.Id) && slices.Contains(catIDs, c.Category) {
-			counter++
-		}
-	}
-	if counter == 0 {
-		return Coupon{}, resterrors.NewBadRequestError(constants.MESSAGE_COUPON_NOT_APPLIED)
 	}
 
 	return coupon, nil

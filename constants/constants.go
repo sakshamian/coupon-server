@@ -1,5 +1,7 @@
 package constants
 
+import "time"
+
 const (
 	// error messages
 	MESSAGE_INVALID_REQUEST_PARAMETERS = "Invalid Reqeust parameters"
@@ -12,4 +14,8 @@ const (
 	// discount type
 	DISCOUNT_TYPE_CHARGE = "charges"
 	DISCOUNT_TYPE_ITEM   = "inventory"
+
+	// cache constants
+	COUPON_CACHE_KEY = "coupon_%s"
+	COUPON_CACHE_TTL = time.Hour * 24
 )

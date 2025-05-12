@@ -2,6 +2,7 @@ package main
 
 import (
 	"coupon-system/db"
+	cache "coupon-system/redis"
 	"coupon-system/routes"
 	"fmt"
 	"os"
@@ -14,8 +15,10 @@ func init() {
 	fmt.Println("DB Initialization Begin() ..........")
 	godotenv.Load()
 	db.Connect()
+	cache.Connect()
 	fmt.Println("DB Initialization Done() ..........")
 }
+
 func main() {
 	router := gin.Default()
 	routes.InitRoutes(router)
