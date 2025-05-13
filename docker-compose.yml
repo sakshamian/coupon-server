@@ -1,0 +1,46 @@
+services:
+  coupon-service:
+    build: .
+    container_name: coupon-service
+    ports:
+      - "7170:7170"
+    depends_on:
+      - redis
+      - mysqldb
+    environment:
+      DB_HOST: mysqldb
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: 12345678
+      DB_NAME: coupon_db
+    networks:
+      - go-network
+
+  mysqldb:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345678
+      MYSQL_DATABASE: coupon_db
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - go-network
+    
+  redis:
+    image: redis:7-alpine
+    container_name: redis_cache
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - go-network
+
+networks:
+  go-network:
+
+volumes: # Added this section
+  db_data: {} # Defines the named volume 'db_data'
