@@ -36,11 +36,9 @@ func Connect() (*redis.Client, error) {
 	if redisHost == "" {
 		redisHost = "redis:6379"
 	}
-	redisPassword := os.Getenv("REDIS_PASSWORD")
 
 	client := redis.NewClient(&redis.Options{
-		Addr:     redisHost,
-		Password: redisPassword,
+		Addr: redisHost,
 	})
 	pong, err := client.Ping(&gin.Context{}).Result()
 	fmt.Println("[redis]", pong, " ", err)

@@ -1,0 +1,20 @@
+CREATE TABLE IF NOT EXISTS `coupon` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `coupon_code` varchar(50) NOT NULL,
+  `usage_type` enum('one_time','multi_use','time_based') NOT NULL,
+  `applicable_medicine_ids` json DEFAULT NULL,
+  `applicable_categories` json DEFAULT NULL,
+  `min_order_value` decimal(10,2) NOT NULL,
+  `valid_from` datetime NOT NULL,
+  `valid_to` datetime NOT NULL,
+  `terms_and_conditions` text,
+  `discount_type` enum('inventory','charges') NOT NULL,
+  `discount_value` decimal(10,2) NOT NULL,
+  `max_usage_per_user` int NOT NULL,
+  `is_active` int DEFAULT '1',
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `coupon_code` (`coupon_code`)
+);

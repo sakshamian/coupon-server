@@ -27,8 +27,10 @@ package db
 // package sdb
 
 import (
+	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"strconv"
 
 	"github.com/joho/godotenv"
@@ -51,13 +53,13 @@ var (
 	DB *gorm.DB
 )
 
-// InitializeClients initializes the global DB client
 func Connect() {
 	var err error
 
 	config := LoadDBConfig()
 	// Initialize MySQL client with GORM
-	dbParams := "?parseTime=true&charset=utf8mb4&loc=Asia%2FKolkata&timeout=5s&rejectReadOnly=true"
+	dbParams := "?parseTime=true&charset=utf8mb4&timeout=5s&rejectReadOnly=true"
+	fmt.Println(config, ":check")
 	dsn := config.DBUser + ":" + config.DBPassword + "@tcp(" + config.DBHost + ":" + config.DBPort + ")/" + config.DBName + dbParams
 	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),
@@ -74,6 +76,12 @@ func Connect() {
 	sqlDB.SetMaxOpenConns(config.MaxOpenConnections)
 	sqlDB.SetMaxIdleConns(config.MaxIdleConnections)
 
+	cwd, _ := os.Getwd()
+	migrationsPath := filepath.Join(cwd, "migrations")
+	err = RunMigrations(sqlDB, migrationsPath)
+	if err != nil {
+		fmt.Println("Failed to migrate tables:", err)
+	}
 	log.Println("connected to MySQL")
 }
 

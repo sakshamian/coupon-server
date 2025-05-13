@@ -15,7 +15,7 @@ func InitRoutes(router *gin.Engine) {
 
 			admin := v1.Group("admin")
 			{
-				// TODO: middleware for admin auth
+				// middleware for admin auth
 				couponManagement := admin.Group("coupon")
 				{
 					couponManagement.POST("", handler.CreateCoupon)
@@ -26,6 +26,7 @@ func InitRoutes(router *gin.Engine) {
 
 			app := v1.Group("app")
 			{
+				// app APIs
 				couponModule := app.Group("coupons")
 				{
 					couponModule.POST("applicable", handler.GetApplicableCoupons)
