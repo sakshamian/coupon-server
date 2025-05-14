@@ -35,3 +35,6 @@
 
 ## Additonal notes:
   The application uses resterros package for error handling and responses package for response handling. These packages are written by me for maintaining consistency in responses and errors.
+
+## Contact:
+  Reach out to me at <sakshamnegi.dev@gmail.com> for any questions or feedback.
