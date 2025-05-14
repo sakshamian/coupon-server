@@ -27,11 +27,13 @@ package db
 // package sdb
 
 import (
+	"coupon-system/constants"
 	"fmt"
 	"log"
 	"os"
 	"path/filepath"
 	"strconv"
+	"time"
 
 	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
@@ -61,9 +63,15 @@ func Connect() {
 	dbParams := "?parseTime=true&charset=utf8mb4&timeout=5s&rejectReadOnly=true"
 	fmt.Println(config, ":check")
 	dsn := config.DBUser + ":" + config.DBPassword + "@tcp(" + config.DBHost + ":" + config.DBPort + ")/" + config.DBName + dbParams
-	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
-	})
+	for range constants.MAX_RETRIES {
+		DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
+			Logger: logger.Default.LogMode(logger.Info),
+		})
+		if err == nil {
+			break
+		}
+		time.Sleep(3 * time.Second)
+	}
 	if err != nil {
 		log.Fatalf("Failed to connect to MySQL: %v", err)
 	}

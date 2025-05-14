@@ -18,8 +18,28 @@ func GetApplicableCoupons(req request.ApplicableCouponRequest) ([]response.Appli
 		return []response.ApplicableCouponResponse{}, err
 	}
 
-	discountRes := make([]response.ApplicableCouponResponse, 0, len(res))
+	var couponRes []coupon.Coupon
 	for _, item := range res {
+		var medIDs, catIDs []string
+		_ = json.Unmarshal(item.ApplicableMedicineIDs, &medIDs)
+		_ = json.Unmarshal(item.ApplicableCategories, &catIDs)
+
+		for _, c := range req.CartItems {
+			if slices.Contains(medIDs, c.Id) && slices.Contains(catIDs, c.Category) {
+				couponRes = append(couponRes, item)
+				break
+			}
+		}
+	}
+
+	discountRes := make([]response.ApplicableCouponResponse, 0, len(couponRes))
+	for _, item := range res {
+		cacheKey := fmt.Sprintf(constants.COUPON_CACHE_KEY, item.CouponCode)
+		go cache.SetInRedis(&cache.SetRedis{
+			Key:  cacheKey,
+			Data: item,
+			Exp:  constants.COUPON_CACHE_TTL,
+		})
 		discountRes = append(discountRes, coupon.ConvertToDiscountResponse(item))
 	}
 

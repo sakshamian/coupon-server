@@ -3,11 +3,11 @@ package coupon
 import (
 	"coupon-system/constants"
 	"coupon-system/db"
-	"encoding/json"
-	"slices"
 
 	"coupon-system/models/request"
 	"coupon-system/pkg/resterrors"
+
+	"github.com/go-sql-driver/mysql"
 )
 
 func GetApplicableCoupons(req request.ApplicableCouponRequest) ([]Coupon, resterrors.RestErr) {
@@ -24,20 +24,7 @@ func GetApplicableCoupons(req request.ApplicableCouponRequest) ([]Coupon, rester
 		return []Coupon{}, resterrors.NewBadRequestError(constants.MESSAGE_NO_APPLICABLE_COUPON)
 	}
 
-	var couponRes []Coupon
-	for _, item := range coupons {
-		var medIDs, catIDs []string
-		_ = json.Unmarshal(item.ApplicableMedicineIDs, &medIDs)
-		_ = json.Unmarshal(item.ApplicableCategories, &catIDs)
-
-		for _, c := range req.CartItems {
-			if slices.Contains(medIDs, c.Id) && slices.Contains(catIDs, c.Category) {
-				couponRes = append(couponRes, item)
-				break
-			}
-		}
-	}
-	return couponRes, nil
+	return coupons, nil
 }
 
 func GetCouponByCouponCode(couponCode string) (Coupon, resterrors.RestErr) {
@@ -56,6 +43,9 @@ func GetCouponByCouponCode(couponCode string) (Coupon, resterrors.RestErr) {
 // admin APIs
 func (c Coupon) Create() resterrors.RestErr {
 	result := db.DB.Table(Coupon{}.TableName()).Create(&c)
+	if mysqlError, ok := result.Error.(*mysql.MySQLError); ok && mysqlError.Number == 1062 {
+		return resterrors.NewConflictError(constants.MESSAGE_COUPON_ALREADY_EXISTS)
+	}
 	if result.Error != nil {
 		return resterrors.NewInternalServerError(constants.MESSAGE_SOMETHING_WENT_WRONG, result.Error)
 	}
@@ -63,7 +53,7 @@ func (c Coupon) Create() resterrors.RestErr {
 }
 
 func Delete(couponId uint) resterrors.RestErr {
-	result := db.DB.Table(Coupon{}.TableName()).Update("is_active = ?", 0).Where("id = ?", couponId)
+	result := db.DB.Table(Coupon{}.TableName()).Where("id = ?", couponId).Update("is_active", 0)
 	if result.RowsAffected == 0 {
 		resterrors.NewNotFoundError(constants.MESSAGE_NO_COUPON_FOUND)
 	}

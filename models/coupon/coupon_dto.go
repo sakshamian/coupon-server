@@ -47,6 +47,7 @@ func ConvertToCouponDTO(req *request.CreateCoupon) Coupon {
 		ValidTo:               req.ValidTo,
 		TermsAndConditions:    req.TermsAndConditions,
 		DiscountType:          req.DiscountType,
+		DiscountValue:         req.DiscountValue,
 		MaxUsagePerUser:       req.MaxUsagePerUser,
 		IsActive:              req.IsActive,
 	}

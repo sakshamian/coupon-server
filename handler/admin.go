@@ -30,31 +30,6 @@ func CreateCoupon(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, responses.ResponseCreated(nil))
 }
 
-// func UpdateAdminUser(ctx *gin.Context) {
-// 	var req request.UpdateAdminUser
-// 	var restError resterrors.RestErr
-
-// 	if err := ctx.ShouldBindJSON(&req); err != nil || req.Id < 1 {
-// 		restError = resterrors.NewBadRequestError(constants.MESSAGE_INVALID_INPUTS)
-// 		ctx.JSON(restError.Status(), restError)
-// 		return
-// 	}
-
-// 	restError = req.Validate(ctx)
-// 	if restError != nil {
-// 		ctx.JSON(restError.Status(), restError)
-// 		return
-// 	}
-
-// 	restError = services.UpdateAdminUser(&req)
-// 	if restError != nil {
-// 		ctx.JSON(restError.Status(), restError)
-// 		return
-// 	}
-
-// 	ctx.JSON(http.StatusOK, responses.ResponseSuccess(nil))
-// }
-
 func GetCouponList(ctx *gin.Context) {
 	coupons, restError := service.GetCouponList()
 	if restError != nil {

@@ -1,0 +1,462 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "coupon-server",
+        "contact": {},
+        "version": "1.0"
+    },
+    "servers": [
+        {
+            "url": "http://0.0.0.0:7170/api/v1",
+            "variables": {}
+        }
+    ],
+    "paths": {
+        "/admin/coupon": {
+            "get": {
+                "tags": [
+                    "Coupon management"
+                ],
+                "summary": "Get coupon list",
+                "operationId": "Getcouponlist",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "headers": {}
+                    }
+                },
+                "deprecated": false
+            },
+            "post": {
+                "tags": [
+                    "Coupon management"
+                ],
+                "summary": "Create coupon",
+                "operationId": "Createcoupon",
+                "parameters": [],
+                "requestBody": {
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/CreatecouponRequest"
+                                    },
+                                    {
+                                        "example": {
+                                            "coupon_code": "FARMAKO100",
+                                            "usage_type": "one_time",
+                                            "applicable_medicine_ids": [
+                                                "MED99"
+                                            ],
+                                            "applicable_categories": [
+                                                "antibiotic"
+                                            ],
+                                            "min_order_value": 300,
+                                            "valid_from": "2025-05-01T00:00:00+05:30",
+                                            "valid_to": "2025-06-01T23:59:59+05:30",
+                                            "terms_and_conditions": "Valid on first order only.",
+                                            "discount_type": "inventory",
+                                            "discount_value": 150,
+                                            "max_usage_per_user": 1,
+                                            "is_active": 1
+                                        }
+                                    }
+                                ]
+                            },
+                            "example": {
+                                "coupon_code": "FARMAKO100",
+                                "usage_type": "one_time",
+                                "applicable_medicine_ids": [
+                                    "MED99"
+                                ],
+                                "applicable_categories": [
+                                    "antibiotic"
+                                ],
+                                "min_order_value": 300,
+                                "valid_from": "2025-05-01T00:00:00+05:30",
+                                "valid_to": "2025-06-01T23:59:59+05:30",
+                                "terms_and_conditions": "Valid on first order only.",
+                                "discount_type": "inventory",
+                                "discount_value": 150,
+                                "max_usage_per_user": 1,
+                                "is_active": 1
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "headers": {}
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/admin/coupon/1": {
+            "delete": {
+                "tags": [
+                    "Coupon management"
+                ],
+                "summary": "Delete coupon",
+                "operationId": "Deletecoupon",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "headers": {}
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/app/coupons/applicable": {
+            "post": {
+                "tags": [
+                    "Discount APIs"
+                ],
+                "summary": "Get applicable coupons",
+                "operationId": "Getapplicablecoupons",
+                "parameters": [],
+                "requestBody": {
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/GetapplicablecouponsRequest"
+                                    },
+                                    {
+                                        "example": {
+                                            "cart_items": [
+                                                {
+                                                    "id": "MED123",
+                                                    "category": "painkiller"
+                                                },
+                                                {
+                                                    "id": "MED99",
+                                                    "category": "antibiotic"
+                                                }
+                                            ],
+                                            "order_total": 700,
+                                            "timestamp": "2025-05-05T15:00:00Z"
+                                        }
+                                    }
+                                ]
+                            },
+                            "example": {
+                                "cart_items": [
+                                    {
+                                        "id": "MED123",
+                                        "category": "painkiller"
+                                    },
+                                    {
+                                        "id": "MED99",
+                                        "category": "antibiotic"
+                                    }
+                                ],
+                                "order_total": 700,
+                                "timestamp": "2025-05-05T15:00:00Z"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "headers": {}
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/app/coupons/validate": {
+            "post": {
+                "tags": [
+                    "Discount APIs"
+                ],
+                "summary": "Apply coupon",
+                "operationId": "Applycoupon",
+                "parameters": [],
+                "requestBody": {
+                    "description": "",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/ApplycouponRequest"
+                                    },
+                                    {
+                                        "example": {
+                                            "coupon_code": "FARMAKO100",
+                                            "cart_items": [
+                                                {
+                                                    "id": "MED123",
+                                                    "category": "painkiller"
+                                                },
+                                                {
+                                                    "id": "MED99",
+                                                    "category": "antibiotic"
+                                                }
+                                            ],
+                                            "order_total": 700,
+                                            "timestamp": "2025-05-05T15:00:00Z"
+                                        }
+                                    }
+                                ]
+                            },
+                            "example": {
+                                "coupon_code": "FARMAKO100",
+                                "cart_items": [
+                                    {
+                                        "id": "MED123",
+                                        "category": "painkiller"
+                                    },
+                                    {
+                                        "id": "MED99",
+                                        "category": "antibiotic"
+                                    }
+                                ],
+                                "order_total": 700,
+                                "timestamp": "2025-05-05T15:00:00Z"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "headers": {}
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/health": {
+            "get": {
+                "tags": [
+                    "Health"
+                ],
+                "summary": "Health check",
+                "operationId": "Healthcheck",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "headers": {}
+                    }
+                },
+                "deprecated": false
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "CreatecouponRequest": {
+                "title": "CreatecouponRequest",
+                "required": [
+                    "coupon_code",
+                    "usage_type",
+                    "applicable_medicine_ids",
+                    "applicable_categories",
+                    "min_order_value",
+                    "valid_from",
+                    "valid_to",
+                    "terms_and_conditions",
+                    "discount_type",
+                    "discount_value",
+                    "max_usage_per_user",
+                    "is_active"
+                ],
+                "type": "object",
+                "properties": {
+                    "coupon_code": {
+                        "type": "string"
+                    },
+                    "usage_type": {
+                        "type": "string"
+                    },
+                    "applicable_medicine_ids": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": ""
+                    },
+                    "applicable_categories": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": ""
+                    },
+                    "min_order_value": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "valid_from": {
+                        "type": "string"
+                    },
+                    "valid_to": {
+                        "type": "string"
+                    },
+                    "terms_and_conditions": {
+                        "type": "string"
+                    },
+                    "discount_type": {
+                        "type": "string"
+                    },
+                    "discount_value": {
+                        "type": "number"
+                    },
+                    "max_usage_per_user": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "is_active": {
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                },
+                "example": {
+                    "coupon_code": "FARMAKO100",
+                    "usage_type": "one_time",
+                    "applicable_medicine_ids": [
+                        "MED99"
+                    ],
+                    "applicable_categories": [
+                        "antibiotic"
+                    ],
+                    "min_order_value": 300,
+                    "valid_from": "2025-05-01T00:00:00+05:30",
+                    "valid_to": "2025-06-01T23:59:59+05:30",
+                    "terms_and_conditions": "Valid on first order only.",
+                    "discount_type": "inventory",
+                    "discount_value": 150,
+                    "max_usage_per_user": 1,
+                    "is_active": 1
+                }
+            },
+            "GetapplicablecouponsRequest": {
+                "title": "GetapplicablecouponsRequest",
+                "required": [
+                    "cart_items",
+                    "order_total",
+                    "timestamp"
+                ],
+                "type": "object",
+                "properties": {
+                    "cart_items": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/CartItem"
+                        },
+                        "description": ""
+                    },
+                    "order_total": {
+                        "type": "number"
+                    },
+                    "timestamp": {
+                        "type": "string"
+                    }
+                },
+                "example": {
+                    "cart_items": [
+                        {
+                            "id": "MED123",
+                            "category": "painkiller"
+                        },
+                        {
+                            "id": "MED99",
+                            "category": "antibiotic"
+                        }
+                    ],
+                    "order_total": 700,
+                    "timestamp": "2025-05-05T15:00:00Z"
+                }
+            },
+            "CartItem": {
+                "title": "CartItem",
+                "required": [
+                    "id",
+                    "category"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "category": {
+                        "type": "string"
+                    }
+                },
+                "example": {
+                    "id": "MED123",
+                    "category": "painkiller"
+                }
+            },
+            "ApplycouponRequest": {
+                "title": "ApplycouponRequest",
+                "required": [
+                    "coupon_code",
+                    "cart_items",
+                    "order_total",
+                    "timestamp"
+                ],
+                "type": "object",
+                "properties": {
+                    "coupon_code": {
+                        "type": "string"
+                    },
+                    "cart_items": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/CartItem"
+                        },
+                        "description": ""
+                    },
+                    "order_total": {
+                        "type": "number"
+                    },
+                    "timestamp": {
+                        "type": "string"
+                    }
+                },
+                "example": {
+                    "coupon_code": "FARMAKO100",
+                    "cart_items": [
+                        {
+                            "id": "MED123",
+                            "category": "painkiller"
+                        },
+                        {
+                            "id": "MED99",
+                            "category": "antibiotic"
+                        }
+                    ],
+                    "order_total": 700,
+                    "timestamp": "2025-05-05T15:00:00Z"
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Coupon management"
+        },
+        {
+            "name": "Discount APIs"
+        },
+        {
+            "name": "Health"
+        }
+    ]
+}
