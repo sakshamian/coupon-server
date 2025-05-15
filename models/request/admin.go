@@ -1,6 +1,8 @@
 package request
 
 import (
+	"coupon-system/constants"
+	"coupon-system/pkg/resterrors"
 	"time"
 )
 
@@ -16,5 +18,30 @@ type CreateCoupon struct {
 	DiscountType          string    `json:"discount_type" binding:"required"`
 	DiscountValue         float64   `json:"discount_value" binding:"required"`
 	MaxUsagePerUser       int       `json:"max_usage_per_user" binding:"required"`
-	IsActive              int       `json:"is_active,omitempty"`
+	IsActive              int       `json:"is_active" binding:"required"`
+}
+
+func (req CreateCoupon) Validate() resterrors.RestErr {
+	if req.UsageType != constants.USAGE_TYPE_SINGLE && req.UsageType != constants.USAGE_TYPE_MULTIPLE && req.UsageType != constants.USAGE_TYPE_TIME_BASED {
+		return resterrors.NewBadRequestError(constants.MESSAGE_INVALID_REQUEST_PARAMETERS)
+	}
+	if len(req.ApplicableMedicineIDs) == 0 || len(req.ApplicableCategories) == 0 {
+		return resterrors.NewBadRequestError(constants.MESSAGE_INVALID_REQUEST_PARAMETERS)
+	}
+	if req.MinOrderValue <= 0 || req.MaxUsagePerUser <= 0 || req.DiscountValue <= 0 {
+		return resterrors.NewBadRequestError(constants.MESSAGE_INVALID_REQUEST_PARAMETERS)
+	}
+	if req.ValidTo.Before(req.ValidFrom) {
+		return resterrors.NewBadRequestError(constants.MESSAGE_INVALID_REQUEST_PARAMETERS)
+	}
+	if req.DiscountType != constants.DISCOUNT_TYPE_CHARGE && req.DiscountType != constants.DISCOUNT_TYPE_ITEM {
+		return resterrors.NewBadRequestError(constants.MESSAGE_INVALID_REQUEST_PARAMETERS)
+	}
+	if req.DiscountType != constants.DISCOUNT_TYPE_CHARGE && req.DiscountType != constants.DISCOUNT_TYPE_ITEM {
+		return resterrors.NewBadRequestError(constants.MESSAGE_INVALID_REQUEST_PARAMETERS)
+	}
+	if req.IsActive != constants.ACTIVE_COUPON_TYPE && req.IsActive != constants.INACTIVE_COUPON_TYPE {
+		return resterrors.NewBadRequestError(constants.MESSAGE_INVALID_REQUEST_PARAMETERS)
+	}
+	return nil
 }

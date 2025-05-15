@@ -21,6 +21,11 @@ func CreateCoupon(ctx *gin.Context) {
 		return
 	}
 
+	if restErr := req.Validate(); restErr != nil {
+		ctx.JSON(restErr.Status(), restErr)
+		return
+	}
+
 	err := service.CreateCoupon(&req)
 	if err != nil {
 		ctx.JSON(err.Status(), err)
