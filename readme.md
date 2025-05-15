@@ -24,6 +24,9 @@
     docker compose up -d --build
     ```
 
+## Concurrency notes
+  The Get applicable coupons and validate coupon API hit the database with Read Committed isolation level which ensures that only the committed data is read.
+  
 ## Caching notes
   The application uses redis to cache coupons. When the API to get applicable coupons gets coupons from database, we also store them in redis. The key used to store coupon data is the unique coupon code. The api to validate a coupon checks the redis for coupon data, if it finds the coupon, we proceed with the validations. Otherwise, the coupon is fetched from database.
 
