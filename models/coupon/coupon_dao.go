@@ -3,6 +3,7 @@ package coupon
 import (
 	"coupon-system/constants"
 	"coupon-system/db"
+	"database/sql"
 
 	"coupon-system/models/request"
 	"coupon-system/pkg/resterrors"
@@ -11,8 +12,14 @@ import (
 )
 
 func GetApplicableCoupons(req request.ApplicableCouponRequest) ([]Coupon, resterrors.RestErr) {
+	tx := db.DB.Begin(&sql.TxOptions{
+		Isolation: sql.LevelReadCommitted,
+		ReadOnly:  true,
+	})
+	defer tx.Rollback()
+
 	var coupons []Coupon
-	result := db.DB.Debug().Table(Coupon{}.TableName()).
+	result := db.DB.Table(Coupon{}.TableName()).
 		Where("valid_from <= ? AND valid_to >= ?", req.Timestamp, req.Timestamp).
 		Where("min_order_value <= ?", req.OrderTotal).
 		Where("is_active = ?", 1).
@@ -24,19 +31,27 @@ func GetApplicableCoupons(req request.ApplicableCouponRequest) ([]Coupon, rester
 		return []Coupon{}, resterrors.NewBadRequestError(constants.MESSAGE_NO_APPLICABLE_COUPON)
 	}
 
+	tx.Commit()
 	return coupons, nil
 }
 
 func GetCouponByCouponCode(couponCode string) (Coupon, resterrors.RestErr) {
+	tx := db.DB.Begin(&sql.TxOptions{
+		Isolation: sql.LevelReadCommitted,
+		ReadOnly:  true,
+	})
+	defer tx.Rollback()
+
 	var coupon Coupon
-	result := db.DB.Debug().Table(Coupon{}.TableName()).Where("coupon_code = ?", couponCode).First(&coupon)
-	if result.Error != nil {
-		return Coupon{}, resterrors.NewInternalServerError(constants.MESSAGE_SOMETHING_WENT_WRONG, result.Error)
-	}
+	result := db.DB.Table(Coupon{}.TableName()).Where("coupon_code = ?", couponCode).First(&coupon)
 	if result.RowsAffected == 0 {
 		return Coupon{}, resterrors.NewBadRequestError(constants.MESSAGE_NO_APPLICABLE_COUPON)
 	}
+	if result.Error != nil {
+		return Coupon{}, resterrors.NewInternalServerError(constants.MESSAGE_SOMETHING_WENT_WRONG, result.Error)
+	}
 
+	tx.Commit()
 	return coupon, nil
 }
 
